@@ -1,0 +1,9 @@
+<launch>
+  <node pkg="ucar_controller" name="base_driver" type="base_driver" output="screen" >
+    <rosparam command="load" file="$(find ucar_controller)/config/driver_params_mini.yaml" />
+  </node>
+  <node name="key_controller" pkg="ucar_map" type="mbot_teleop.py" output="screen">
+  </node>
+
+  <!-- <node pkg="joy" name="joy_node" type="joy_node"/> -->
+</launch> 

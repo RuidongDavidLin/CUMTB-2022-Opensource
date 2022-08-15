@@ -1,0 +1,5 @@
+# int8 get_awake_angle #1,0
+---
+string result
+int32 awake_angle
+string fail_reason 

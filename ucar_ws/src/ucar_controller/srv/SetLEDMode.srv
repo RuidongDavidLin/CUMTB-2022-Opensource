@@ -1,0 +1,11 @@
+uint8 MODE_NORMAL = 0
+uint8 MODE_BLINK  = 1
+uint8 MODE_BREATH = 2
+uint8   mode_type
+float64 frequency 
+uint8 red_value
+uint8 green_value
+uint8 blue_value
+---
+bool success
+string message

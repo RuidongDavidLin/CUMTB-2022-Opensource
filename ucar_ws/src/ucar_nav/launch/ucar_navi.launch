@@ -1,0 +1,71 @@
+<launch>
+    <!--arg name="odom_topic"      default="/odom/filtered" /-->
+    <arg name="odom_topic"      default="/odom" />
+    <arg name="laser_topic"     default="/scan" />
+    <arg name="cmd_vel_name"    default="/cmd_vel" />
+
+  <!-- Run the map server -->
+   
+  <include file="$(find ucar_controller)/launch/base_driver.launch" > 
+  </include>
+
+  <!--include file="$(find ucar_controller)/launch/tf_server.launch" > 
+  </include-->
+
+  <include file="$(find ydlidar)/launch/ydlidar.launch" > 
+  </include>
+
+  <!--include file="$(find robot_localization)/launch/ekf_template.launch" > 
+  </include>
+
+  <include file="$(find rf2o_laser_odometry)/launch/rf2o_laser_odometry.launch" > 
+  </include-->
+
+  <!--include file="$(find robot_pose_ekf)/robot_pose_ekf.launch" > 
+  </include-->
+  
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find ucar_nav)/maps/ucar_2022-2.yaml" output="screen">
+   <param name="frame_id" value="map" />
+  </node> 
+
+  <include file="$(find ucar_nav)/launch/config/amcl/amcl_omni.launch" > </include>
+  <!--node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0.0 0.0 0.0 0 0 0.0 /map /odom 1000"/-->
+
+  <node pkg="move_base" type="move_base" respawn="true" name="move_base" output="screen">
+
+
+     <remap from="/odom"            to="$(arg odom_topic)"/>
+     <remap from="/scan"            to="$(arg laser_topic)"/> 
+     <remap from="/cmd_vel"         to="$(arg cmd_vel_name)"/>
+     <!--remap from="/cmd_vel"         to="/vel"/-->
+
+    <!--param name="base_global_planner" value="global_planner/GlobalPlanner"/-->
+    <!--param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/-->
+    <rosparam file="$(find ucar_nav)/launch/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find ucar_nav)/launch/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <!--rosparam file="$(find ucar_nav)/launch/config/move_base/dwa_local_planner_params.yaml" command="load" /-->
+    <rosparam file="$(find ucar_nav)/launch/config/teb_par.yaml" command="load" />
+    <rosparam file="$(find ucar_nav)/launch/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ucar_nav)/launch/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find ucar_nav)/launch/config/costmap_converter_params.yaml" command="load" />
+
+
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="planner_frequency" value="10.0" />
+    <param name="planner_patience" value="2" />
+    <param name="use_dijkstra" value="true" />
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <param name="controller_frequency" value="30.0" />
+    <param name="controller_patience" value="10.0" />
+    <param name="clearing_rotation_allowed" value="true" />
+
+  </node>
+    
+    <!--node name="race_optimizer" pkg="ucar_nav" type="pid_server.py" output="screen">
+    </node-->
+  
+    <!--node pkg="ucar_nav" name="cmd_vel_to_ackermann_drive" type="cmd_vel_to_ackermann_drive.py"/-->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ucar_nav)/launch/default.rviz"/>
+
+</launch>

@@ -1,0 +1,5 @@
+# int8 get_major_id #1,0
+---
+string result
+int8 mic_id
+string fail_reason 

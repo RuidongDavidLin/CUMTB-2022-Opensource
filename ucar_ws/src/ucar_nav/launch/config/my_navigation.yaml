@@ -1,0 +1,80 @@
+#Description:
+#
+#碰撞检测的参数
+#use_cosllsion_detection:实时进行全局路径进行碰撞检测，默认为true
+#use_inscribed_obstacle:在全局路径碰撞检测中，将INSCRIBED_INFLATED_OBSTACLE(253)代价当成障碍物,默认为false
+#MaxRangePath:全局碰撞检测的检测路径长度，需要略小于局部代价地图的半径
+  use_cosllsion_detection: true
+  use_inscribed_obstacle: true
+  MaxRangePath: 1.4
+
+#Move Base参数
+#avoid_obstacles_number:遇到障碍物进行避障的次数，当大于这个次数时，则进行逃离
+#allow_clear_global_costmap:在完成导航后，清除全局代价地图
+#is_judge_goal_occupy:是否需要判断目标点被占据
+#current_to_goal_distance_threshold:小车当前位置到目标点的距离阈值，当小于该阈值则需要判断目标点是否被判断被障碍物占据
+#is_allow_publish_init_pose:当无法规划出全局路径的时候，是否允许发送起始点
+#use_oscillation:是否判断小车震荡,true则判断震荡，false则不判断震荡
+#wait_time:无法规划出路径的时候，导航的等待时间，超过时间则取消导航,需要重新发布目标点启动导航，默认等待时间10分钟
+#这里是以3s为间隔，即等待1分钟，wait_time设置为20
+#wait_delta_time:困住时重规划的间隔时间
+  avoid_obstacles_number: 3
+  allow_clear_global_costmap: true
+  is_judge_goal_occupy: false
+  current_to_goal_distance_threshold: 1.0
+  is_allow_publish_init_pose: false
+  use_oscillation: true
+  wait_time: 4.0
+  wait_delta_time: 3.0
+#Global Planner中a star参数
+#safe_grid:抛弃障碍物附近的几个栅格，使得扩展接点障碍物之间形成一定几个栅格大小距离(该参数在planner_jps中也有同样的作用)
+#safe_distance:考虑多远内的障碍物对扩展节点的影响
+#vehicle_width_half_redundancy:略大于小车宽度的一半，避免小车在有更好的路径时，选择缝隙穿过的情况
+
+  safe_grid: 3
+  safe_distance: 0.35
+  vehicle_width_half_redundancy: 0.13
+
+#obstacle distance cost参数
+#vehicle_expand_length:小车中心位置向左右扩展的长度，从而在该判断点上获得与障碍物的距离
+
+  vehicle_expand_length: 0.171
+
+#逃离参数
+#espace_vel:脱困时，小车的逃离速度
+#vehicle_width_half: 小车实际宽度的一半
+#vehicle_length_half: 小车实际长度的一半
+  espace_velocity: 0.075
+  vehicle_width_half: 0.128
+  vehicle_length_half: 0.171
+
+#dwa 参数
+#obstacle_penalty_scale:最近障碍物对dwa的速度限制，惩罚值越小，小车速度越慢，取值需要大于0
+#goal_penalty_scale:小车到达目标点的惩罚减速的权重
+#MaxRotateVelocity:起始点最大旋转角速度
+#pub_velocity_zero:发布速度零
+  obstacle_penalty_scale: 0.8
+  goal_penalty_scale: 0.35
+  MaxRotateVelocity: 1.8
+  pub_velocity_zero: false
+
+#voronoi planner 参数
+#threshold_distance:voronoi planner中抛弃距离障碍物多远的栅格
+#preview_point_distance 在距离起始点多远处选择预描点
+  threshold_distance: 0.0
+  preview_point_distance: 0.3
+
+#jps planner 参数
+#smooth_path:是否平滑jps planner的路径，true为平滑，false未不进行平滑
+#oscillation_distance_planner:小车发生震荡时，距离障碍物多远的扩展节点不考虑震荡的安全距离(oscillation_safe_distance)
+#oscillation_safe_distance:小车发生震荡时，在扩展节点一个方向考虑安全距离
+#preview_angle 起点预描角度 单位度
+  smooth_path: false
+  oscillation_distance_planner: 0.55
+  oscillation_safe_distance: 0.2
+  oscillation_time: 3
+  oscillation_distance_1: 0.35
+  preview_angle: 120.0
+  oscillation_length: 0.22
+  oscillation_width: 0.50
+  oscillation_height: 0.2

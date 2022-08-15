@@ -1,0 +1,163 @@
+TebLocalPlannerROS:
+
+ odom_topic: odom
+ map_frame: odom
+
+  # 要调的参数后加 #@
+
+ # Trajectory 轨迹规划参数
+  
+ teb_autosize:  True                        # 自动调整轨迹长度
+ dt_ref:        0.3 #@                      # 两个姿态控制点间的参考时间间隔   #最优树上相邻姿态的最优距离————建议设为车长
+ dt_hysteresis: 0.1                         # 参考时间间隔的抖动范围   #当相邻姿态距离和dt_ref的差超过正负dt_hysteresis时，规划器将改变这一距离
+ max_samples:   5                           # 规划器最多规划的局部路径点样本数量
+ global_plan_overwrite_orientation: False   #覆盖由全局规划器提供的局部路径点的方向
+ allow_init_with_backwards_motion:  false
+ max_global_plan_lookahead_dist:    0.8 #@  #最大向前看距离，降低 max_lookahead_distance （一般）
+                                            #应随车辆最大速度的增大而增大
+                                            #不应超过激光雷达等传感器的可靠测量范围 16m
+                                            #不应超过局部耗费地图的大小
+                                            #决定局部规划初始轨迹的最大长度，实际调试发现此参数无需过大，因为局部轨迹在每个控制周期都被更新，实际执行的指令仅是轨迹上第一个点的速度值
+      
+ global_plan_prune_distance: 0.8  #@        #全局规划器删除路径点的距离阈值
+ exact_arc_length: false                    #如果为真，规划器在速度、加速度和转弯率计算中使用精确的弧长[->增加的CPU时间]，
+                                            #否则使用欧几里德近似
+ feasibility_check_no_poses: 2  #@          #向前采样点个数||检测位姿可到达的时间间隔
+ publish_feedback: true
+    
+ # Robot 机器人约束参数
+ # mainB    
+ max_vel_x:             2.0   #@              #9.0 速度最大限制
+ max_vel_x_backwards:   0.8    #@              #1.0 最大倒车速度
+ max_vel_y:             0.5    #@
+ max_vel_theta:         3.0    #@              #4.0 最大角速度约束(r = v / omega)   
+ acc_lim_x:             0.7    #@              #3.0 最大加速度约束，若电机性能良好且速度不快可以立即刹车，可直接将acc_lim_x设置为0，表示没有约束。若电机不能承受阶跃输入或者响应时间很长，则应当设置加速度限制。
+ acc_lim_y:             0.2    #@7
+ acc_lim_theta:         2.4    #@              #3.0 最大角加速度约束
+ use_proportional_saturation: true
+ is_footprint_dynamic: false
+
+ # ********************** Carlike robot parameters ********************
+ min_turning_radius:        0                 # 0.4 最小转弯半径--最大转角
+ wheelbase:                 0.26  #@          # 前后轮距离
+ cmd_angle_instead_rotvel:  false             # stage simulator takes the angle instead of the rotvel as input (twist message)
+ # ********************************************************************
+
+ footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
+   type: "polygon"
+#   radius: 0.36 # for type "circular"
+#   line_start: [-0.3, 0.0] # for type "line" 线模型起始坐标
+#   line_end: [0.3, 0.0] # for type "line"    线模型尾部坐标
+#   front_offset: 0.2 # for type "two_circles" 前圆心坐标
+#   front_radius: 0.2 # for type "two_circles" 前圆半径
+#   rear_offset: 0.2 # for type "two_circles"  后圆心坐标
+#   rear_radius: 0.2 # for type "two_circles"  后圆半径
+   vertices: [ [0.171, -0.128], [0.171, 0.128], [-0.171, 0.128], [-0.171, -0.128] ] # for type "polygon"多边形边界点
+
+ # GoalTolerance 目标点位置误差范围
+ # 设置太小，可能导致车辆在目标点位置振荡，设置太大，可能导致车辆不在目标点位置停止
+    
+ xy_goal_tolerance:      0.1      #@        #目标跟踪差 xy误差范围
+ yaw_goal_tolerance:     0.8      #@        #目标跟踪差 角度误差范围
+ free_goal_vel:          false              #自由目标速度
+ complete_global_plan:   false
+
+#关于避障
+ obstacle_proximity_ratio_max_vel: 0.0
+ obstacle_proximity_lower_bound: 0.0
+ obstacle_proximity_upper_bound: 0.0
+ weight_velocity_obstacle_ratio: 0.0
+
+    
+ # Obstacles 误差范围
+    
+ min_obstacle_dist: 0.05    #@              #0.5 与障碍物的最小期望距离This value must also include our robot's expansion, since footprint_model is set to "line".
+                                            #必须与局部耗散地图中的值一致
+                                            #。若设置了车辆的轮廓，则不建议使用此参数。
+                                            #使用车辆轮廓配置footprint_model配合膨胀距离即可实现较好效果。
+                                            #障碍物惩罚权重很高，TEB不会违背这一最小距离约束，因此会把可以通过的缝隙视作不能通过，并终止运行。
+                                            #请注意，此处设置的机器人轮廓必须与局部耗费地图中的一致
+ inflation_dist:    0.5     #@              #障碍物膨胀距离0.8
+ include_costmap_obstacles: True            #探测建图时不存在的障碍物
+ costmap_obstacles_behind_robot_dist: 0.1   #限制在机器人背后进行规划时要考虑的已占用本地成本图障碍（以米为单位指定距离
+ obstacle_poses_affected:   10.0  #@        #20 障碍物位置与轨迹上最接近的姿态相连，
+                                            #以减少计算量，但同时也考虑了许多相邻的障碍物
+ dynamic_obstacle_inflation_dist:   0.6 #@  #动态障碍物的膨胀范围，动态障碍物的预测位置周围的缓冲区的惩罚成本非零
+                                            #（应大于min_obstacle_dist才能生效）
+ include_dynamic_obstacles:         True 
+
+ #costmap_converter_plugin:          "costmap_converter::CostmapToPolygonsDBSMCCH"
+ #costmap_converter_spin_thread:     True
+ #costmap_converter_rate:            5
+ legacy_obstacle_association:       false
+
+
+ # Optimization
+ #以下参数为优化时的权重
+ no_inner_iterations:       5     #@      #内部迭代次数，降低迭代次数（no_inner/outer_iterations） （显著）
+ no_outer_iterations:       4     #@      #外部迭代次数，降低迭代次数（no_inner/outer_iterations） （显著）
+ optimization_activate:     True          #是否启用优化
+ optimization_verbose:      false         #是否打印优化信息
+ penalty_epsilon:           0.1   #@      #惩罚系数（接近减速系数）
+                                          #提高penalty_epsilon。此项为速度等约束提供类似膨胀层的缓冲效果。接近限速将产生一定的惩罚值。
+ obstacle_cost_exponent:    4             #障碍物成本指数
+ weight_max_vel_x:          16.0   #@     #最大速度权重
+ weight_max_vel_theta:      10.0   #@     #满足最大允许角速度的优化权重
+ weight_acc_lim_x:          1.0    #@     #满足最大允许平移加速度的优化权重
+ weight_acc_lim_theta:      1.0    #@     #满足最大允许角加速度的优化权重
+ weight_kinematics_nh:      1.2           #运动学的优化权重
+ weight_kinematics_forward_drive:   90.0  #1 大幅增加，可抑制倒车
+ weight_kinematics_turning_radius:  0.0   #90 优化权重，以实现最小转弯半径
+ weight_optimaltime:        8.0    #@     # must be > 0
+                                          #大幅降低weight_optimaltime，设置较大的inflation_dist，
+                                          #并稍微增加weight_inflation。时间权重降低至0.3以下时，
+                                          #车辆速度明显平稳，不会向最高速度加速。膨胀距离大时将远离障碍物行驶。
+ weight_shortest_path:      0.0
+ weight_obstacle:           30.0   #@      #优化权重以保持与障碍物的最小距离
+ weight_inflation:          0.2    #@      #通胀惩罚的优化权重（应该很小）
+ weight_dynamic_obstacle:   2.0    #@      # not in use yet
+ weight_dynamic_obstacle_inflation: 0.6 #@ #优化过程中，和动态障碍物膨胀区的权重
+ 
+
+ global_plan_viapoint_sep:   0.6            #从全局规划路径中提取的路点的相互距离,间隔多远设置一个point
+                                            #在无障碍空间仍不走直线可将其设置为较小的正数
+ weight_viapoint:           56.0             #优化过程中，和全局路径采样点距离的权重
+ weight_adapt_factor:       2               #在每次外部TEB迭代中，一些特殊权重（当前为“ weight_obstacle”）会以此因子重复缩放（weight_new：weight_old * factor）； 
+                                            #迭代地增加权重而不是设置较大的先验值会导致底层优化问题的更好的数值条件。
+ # Homotopy Class Planner
+ # 独特拓扑中的并行规划
+ enable_homotopy_class_planning: false      #是否启用独特拓扑规划
+ enable_multithreading: True    #@          #是否启用多线程，关闭多路径并行规划（效果非常显著）
+                                            #此功能将严重影响规划器性能。当路径中存在大量不连续分布的障碍物（如锥桶）并产生大量可行路径时，此功能有良好的效果。
+                                            #相反，若在单一路径上运行，则没有必要时用此功能
+ max_number_classes:        4   #@          #允许的线程数
+ selection_cost_hysteresis: 1.0             #指定新候选人必须有多少轨迹成本 先前选择的轨迹以进行选择（如果new_cost <old_cost * factor则选择）
+ selection_prefer_initial_plan:     0.95    #为初始计划的等价类中的轨迹指定在区间(0,1)中的成本降低。
+ selection_obst_cost_scale: 100.0            #为了选择“最佳”候选人，障碍成本项的额外缩放(new_obst_cost: obst_cost*factor)
+ selection_alternative_time_cost:   False    #是否使用另一个成本项，用于替换时间成本项（如果没有，则使用时间成本项）
+ 
+ #减小局部耗费地图的大小 （显著）
+ roadmap_graph_no_samples:  15              #如果simple_exploration被turend关闭，请指定为创建路线图图而生成的示例数量
+ roadmap_graph_area_width:  5               #指定采样区域在开始和目标[m]之间的宽度(高度等于开始和目标的距离)
+ roadmap_graph_area_length_scale:   1.0     #矩形区域的长度取决于起点和目标之间的距离。 此参数进一步缩放距离，以使几何中心保持相等！
+ h_signature_prescaler:     0.5             #仅当您在本地成本图中观察到障碍物过多的问题时，才减小此参数
+                                            #请勿将其选择得太低，否则障碍物无法彼此区分（0.2 < 值 <= 1）
+ h_signature_threshold:     0.1
+ obstacle_heading_threshold:        0.85    #在障碍物航向和目标航向之间指定标量乘积的值
+                                            #以便将它们（障碍物）考虑在内进行探索
+ switching_blocking_period:         0.0     #指定允许切换到新的等效类之前需要终止的持续时间（以秒为单位）
+ viapoints_all_candidates: true
+ delete_detours_backwards: true
+ max_ratio_detours_duration_best_duration: 3.0
+ visualize_hc_graph: false
+ visualize_with_time_as_z_axis_scale: false
+
+# Recovery
+ 
+ shrink_horizon_backup: false               #如果您想要在失败时使用备份规划，请将此标志设置为true
+ shrink_horizon_min_duration:  4            #10 #指定备份规划的最小持续时间（以秒为单位）
+ oscillation_recovery:  true                #指定是否启用振荡恢复
+ oscillation_v_eps:     0.1                 #指定振荡恢复的最大速度误差（以m/s为单位）
+ oscillation_omega_eps: 0.1                 #指定振荡恢复的最大角速度误差（以rad/s为单位）
+ oscillation_recovery_min_duration: 10      #指定振荡恢复的最小持续时间（以秒为单位）
+ oscillation_filter_duration:       10      #指定振荡恢复的滤波时间（以秒为单位）

@@ -1,0 +1,13 @@
+<launch>
+  <node name="cartographer_node" pkg="cartographer_ros"
+      type="cartographer_node" args="
+          -configuration_directory $(find ucar_map)/cfg
+          -configuration_basename carto_2d.lua"
+      output="screen">
+    <remap from="scan" to="scan" />
+  </node>
+
+  <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+      type="cartographer_occupancy_grid_node" args="-resolution 0.02" />
+
+</launch>

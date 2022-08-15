@@ -1,0 +1,33 @@
+<launch>
+  <node pkg="ucar_controller" name="sensor_tf_server" type="sensor_tf_server.py" output="screen" >
+    <!-- 注意 launch文件中value只能给具体数值 不要给表达式 -->
+    <param name="~camera_pose_x"   value="0.15"/>
+    <param name="~camera_pose_y"   value="0.0"/>
+    <param name="~camera_pose_z"   value="0.15"/>
+    <param name="~camera_euler_r"  value="-2.007126944"/>
+    <param name="~camera_euler_p"  value=" 0.0"/>
+    <param name="~camera_euler_y"  value="-1.570795"/>
+    
+    <param name="~lidar_pose_x"   value="-0.11"/>
+    <param name="~lidar_pose_y"   value="0.0"/>
+    <param name="~lidar_pose_z"   value="0.165"/>
+    <param name="~lidar_euler_r"  value="0.0"/>
+    <param name="~lidar_euler_p"  value="0.0"/>
+    <param name="~lidar_euler_y"  value="-0.07"/>
+
+    <param name="~imu_pose_x"   value=" 0.05"/>
+    <param name="~imu_pose_y"   value="-0.05"/>
+    <param name="~imu_pose_z"   value=" 0.05"/>
+    <param name="~imu_euler_r"  value=" 0"/>
+    <param name="~imu_euler_p"  value=" 0.0"/>
+    <param name="~imu_euler_y"  value=" 0.0"/>
+
+    <param name="~camera_frame"  value="camera_frame"/>
+    <param name="~lidar_frame"   value="laser_frame"/>
+    <param name="~imu_frame"     value="imu_frame"/>
+    
+    <param name="~base_frame"    value="base_link"/>
+    <!-- tf_rate 是指tf的发布频率 -->
+    <param name="~tf_rate"       value="40"/>
+  </node>
+</launch> 

@@ -1,0 +1,14 @@
+<launch>  
+  <node pkg="rf2o_laser_odometry" type="rf2o_laser_odometry_node" name="rf2o_laser_odometry" output="screen">
+    <param name="laser_scan_topic" value="/scan"/>                         # topic where the lidar scans are being published
+    <param name="odom_topic" value="/odom_rf2o" />                         # topic where tu publish the odometry estimations
+    <param name="publish_tf" value="false" />                              # wheter or not to publish the tf::transform (base->odom)
+    <param name="base_frame_id" value="base_link"/>                      
+    <param name="odom_frame_id" value="odom" />                           # frame_id (tf) to publish the odometry estimations
+    <param name="init_pose_from_topic" value="" />  # (Odom topic) Leave empty to start at point (0,0)
+    <param name="freq" value="12.0"/>                                       # Execution frequency.
+    <param name="verbose" value="true"/>                                  # verbose
+ 
+  </node>
+  
+</launch>

@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- base tf -->
+  <include file="$(find ucar_controller)/launch/tf_server.launch"/>
+
+
+  <node pkg="ucar_controller" name="base_driver" type="base_driver" output="screen" >
+    <rosparam command="load" file="$(find ucar_controller)/config/driver_params_mini.yaml" />
+  </node>
+
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_se" clear_params="true">
+    <rosparam command="load" file="$(find robot_localization)/params/ekf_template.yaml" />
+  </node>
+  <!-- <node pkg="joy" name="joy_node" type="joy_node"/> -->
+</launch> 

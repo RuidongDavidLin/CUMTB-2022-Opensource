@@ -1,0 +1,20 @@
+<launch>
+<!-- base driver -->  
+  <include file="$(find ucar_controller)/launch/base_driver.launch" > 
+  </include>
+
+  <include file="$(find ucar_controller)/launch/tf_server.launch" > 
+  </include>
+
+  <include file="$(find ydlidar)/launch/ydlidar_notf.launch" > 
+  </include>
+
+  <include file="$(find robot_pose_ekf)/robot_pose_ekf.launch" > 
+  </include>
+
+  <arg name="scan_topic" default="scan" />
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ucar_map)/launch/new_gmapping.rviz"/>
+  <!-- cartographer launch -->
+  <include file="$(find ucar_map)/launch/cartographer_start.launch"/>
+</launch>

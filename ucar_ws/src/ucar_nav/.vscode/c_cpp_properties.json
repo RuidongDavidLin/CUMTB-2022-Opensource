@@ -1,0 +1,40 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/ucar/ucar_ws/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/ucar/ucar_ws/src/geometry/eigen_conversions/include/**",
+        "/home/ucar/ucar_ws/src/fdilink_ahrs/include/**",
+        "/home/ucar/ucar_ws/src/geometry/kdl_conversions/include/**",
+        "/home/ucar/ucar_ws/src/pid/include/**",
+        "/home/ucar/ucar_ws/src/rf2o_laser_odometry/include/**",
+        "/home/ucar/ucar_ws/src/robot_localization/include/**",
+        "/home/ucar/ucar_ws/src/robot_pose_ekf/include/**",
+        "/home/ucar/ucar_ws/src/geometry/tf/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_bullet/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_eigen/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_geometry_msgs/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_kdl/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_msgs/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_ros/include/**",
+        "/home/ucar/ucar_ws/src/geometry2/tf2_sensor_msgs/include/**",
+        "/home/ucar/ucar_ws/src/geometry/tf_conversions/include/**",
+        "/home/ucar/ucar_ws/src/ucar_controller/include/**",
+        "/home/ucar/ucar_ws/src/xf_mic_asr_offline/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-arm64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
